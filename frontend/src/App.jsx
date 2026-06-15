@@ -62,6 +62,16 @@ function App() {
           <h3>Top Region</h3>
           <p>{summary.topRegion}</p>
         </div>
+
+        <div style={{ border: "1px solid gray", padding: "20px" }}>
+          <h3>Top Channel</h3>
+          <p>{summary.topChannel}</p>
+        </div>
+
+        <div style={{ border: "1px solid gray", padding: "20px" }}>
+          <h3>Top Product</h3>
+          <p>{summary.topProduct}</p>
+        </div>
       </div>
 
       <h2>Revenue Trend</h2>
