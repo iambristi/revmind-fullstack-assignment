@@ -15,6 +15,11 @@ function App() {
   const [trends, setTrends] = useState([]);
   const [products, setProducts] = useState([]);
 
+  // AI Chat States
+  const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("");
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/summary")
@@ -32,6 +37,29 @@ function App() {
       .catch((err) => console.error(err));
   }, []);
 
+  // Ask AI Function
+  const askQuestion = async () => {
+    if (!question.trim()) return;
+
+    try {
+      setLoading(true);
+
+      const res = await axios.post(
+        "http://localhost:5000/api/chat",
+        {
+          question: question
+        }
+      );
+
+      setAnswer(res.data.answer);
+    } catch (error) {
+      console.error(error);
+      setAnswer("Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!summary) {
     return <h2>Loading...</h2>;
   }
@@ -46,6 +74,7 @@ function App() {
           gap: "20px",
           marginTop: "20px",
           marginBottom: "40px",
+          flexWrap: "wrap"
         }}
       >
         <div style={{ border: "1px solid gray", padding: "20px" }}>
@@ -123,6 +152,53 @@ function App() {
           ))}
         </tbody>
       </table>
+
+      {/* AI CHAT SECTION */}
+
+      <h2 style={{ marginTop: "50px" }}>
+        Ask NovaBite AI
+      </h2>
+
+      <input
+        type="text"
+        value={question}
+        onChange={(e) => setQuestion(e.target.value)}
+        placeholder="Ask a business question..."
+        style={{
+          width: "500px",
+          padding: "10px",
+          marginRight: "10px"
+        }}
+      />
+
+      <button
+        onClick={askQuestion}
+        style={{
+          padding: "10px 20px",
+          cursor: "pointer"
+        }}
+      >
+        Ask
+      </button>
+
+      {loading && (
+        <p style={{ marginTop: "20px" }}>
+          Thinking...
+        </p>
+      )}
+
+      {answer && (
+        <div
+          style={{
+            marginTop: "20px",
+            border: "1px solid gray",
+            padding: "15px"
+          }}
+        >
+          <h3>Answer</h3>
+          <p>{answer}</p>
+        </div>
+      )}
     </div>
   );
 }
