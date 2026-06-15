@@ -138,3 +138,19 @@ Rules:
 ```
 
 For the five required assignment questions, SQL-based calculations are used to ensure accurate
+
+## What I Would Improve With More Time
+
+* Add streaming AI responses for a more interactive chat experience.
+* Add filtering by region, channel, and category.
+* Add additional charts such as revenue by category and revenue by region.
+* Improve prompt engineering for more accurate business insights.
+* Add automated tests for API endpoints.
+
+## Tradeoffs and Shortcuts
+
+* SQLite was used instead of a hosted database to keep deployment simple.
+* The five required business questions are answered using SQL queries to guarantee accuracy.
+* Gemini is used as a fallback for general business questions.
+* UI styling was kept simple to focus on functionality and assignment requirements.
+
