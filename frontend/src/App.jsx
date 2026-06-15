@@ -78,32 +78,43 @@ function App() {
           gap: "20px",
           marginTop: "20px",
           marginBottom: "40px",
-          flexWrap: "wrap"
+          justifyContent: "center"
         }}
       >
-        <div style={{ border: "1px solid gray", padding: "20px" }}>
-          <h3>Total Revenue</h3>
+        <div
+          style={{
+            border: "1px solid gray",
+            padding: "20px",
+            minWidth: "220px",
+            textAlign: "center"
+          }}
+        >
+          <h3>Total Net Revenue</h3>
           <p>${summary.totalRevenue}</p>
         </div>
 
-        <div style={{ border: "1px solid gray", padding: "20px" }}>
-          <h3>Gross Margin</h3>
+        <div
+          style={{
+            border: "1px solid gray",
+            padding: "20px",
+            minWidth: "220px",
+            textAlign: "center"
+          }}
+        >
+          <h3>Gross Profit Margin</h3>
           <p>{summary.margin}%</p>
         </div>
 
-        <div style={{ border: "1px solid gray", padding: "20px" }}>
+        <div
+          style={{
+            border: "1px solid gray",
+            padding: "20px",
+            minWidth: "220px",
+            textAlign: "center"
+          }}
+        >
           <h3>Top Region</h3>
           <p>{summary.topRegion}</p>
-        </div>
-
-        <div style={{ border: "1px solid gray", padding: "20px" }}>
-          <h3>Top Channel</h3>
-          <p>{summary.topChannel}</p>
-        </div>
-
-        <div style={{ border: "1px solid gray", padding: "20px" }}>
-          <h3>Top Product</h3>
-          <p>{summary.topProduct}</p>
         </div>
       </div>
 
