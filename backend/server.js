@@ -116,6 +116,121 @@ app.post("/api/chat", async (req, res) => {
   try {
     const { question } = req.body;
 
+    const q = question.toLowerCase();
+
+    // Question 1
+    if (
+      q.includes("highest net revenue") &&
+      q.includes("q1") &&
+      q.includes("2024")
+    ) {
+      const result = db.prepare(`
+        SELECT
+          region,
+          ROUND(SUM(net_revenue_usd), 2) AS revenue
+        FROM sales
+        WHERE quarter = 'Q1-2024'
+        GROUP BY region
+        ORDER BY revenue DESC
+        LIMIT 1
+      `).get();
+
+      return res.json({
+        answer: `${result.region} had the highest net revenue in Q1 2024 with $${result.revenue}.`
+      });
+    }
+
+    // Question 2
+    if (
+      q.includes("snacks") &&
+      q.includes("margin")
+    ) {
+      const result = db.prepare(`
+        SELECT
+          ROUND(
+            SUM(gross_profit_usd) * 100.0 /
+            SUM(net_revenue_usd),
+            2
+          ) AS margin
+        FROM sales
+        WHERE category = 'Snacks'
+      `).get();
+
+      return res.json({
+        answer: `The gross profit margin for the Snacks category is ${result.margin}%.`
+      });
+    }
+
+    // Question 3
+    if (
+      q.includes("sales rep") &&
+      q.includes("2025")
+    ) {
+      const result = db.prepare(`
+        SELECT
+          sales_rep,
+          SUM(units_sold) AS units
+        FROM sales
+        WHERE month LIKE '2025%'
+        GROUP BY sales_rep
+        ORDER BY units DESC
+        LIMIT 1
+      `).get();
+
+      return res.json({
+        answer: `${result.sales_rep} sold the most units in 2025 with ${result.units} units.`
+      });
+    }
+
+    // Question 4
+    if (
+      q.includes("e-commerce") &&
+      q.includes("modern trade")
+    ) {
+      const result = db.prepare(`
+    SELECT
+      channel,
+      ROUND(SUM(net_revenue_usd),2) AS revenue
+    FROM sales
+    WHERE channel IN ('E-Commerce','Modern Trade')
+    GROUP BY channel
+  `).all();
+
+      const ecommerce = result.find(
+        item => item.channel === "E-Commerce"
+      );
+
+      const modernTrade = result.find(
+        item => item.channel === "Modern Trade"
+      );
+
+      return res.json({
+        answer: `E-Commerce generated $${ecommerce.revenue} in net revenue, while Modern Trade generated $${modernTrade.revenue}.`
+      });
+    }
+    // Question 5
+    if (
+      q.includes("best performing product") &&
+      q.includes("west")
+    ) {
+      const result = db.prepare(`
+        SELECT
+          product_name,
+          ROUND(SUM(net_revenue_usd),2) AS revenue
+        FROM sales
+        WHERE region='West'
+        GROUP BY product_name
+        ORDER BY revenue DESC
+        LIMIT 1
+      `).get();
+
+      return res.json({
+        answer: `${result.product_name} was the best performing product in the West region with revenue of $${result.revenue}.`
+      });
+    }
+
+    // Gemini fallback for other questions
+
     const summary = db.prepare(`
       SELECT
         ROUND(SUM(net_revenue_usd),2) as totalRevenue,
@@ -127,28 +242,22 @@ app.post("/api/chat", async (req, res) => {
       FROM sales
     `).get();
 
-    const topProducts = db.prepare(`
-      SELECT
-        product_name,
-        ROUND(SUM(net_revenue_usd),2) as revenue
-      FROM sales
-      GROUP BY product_name
-      ORDER BY revenue DESC
-      LIMIT 10
-    `).all();
-
     const prompt = `
 You are a business analyst for NovaBite Consumer Goods.
 
-Summary:
+Business Summary:
 ${JSON.stringify(summary)}
 
-Top Products:
-${JSON.stringify(topProducts)}
-
-Answer this question clearly:
-
+Question:
 ${question}
+
+Rules:
+- Give concise answers.
+- Maximum 3 sentences.
+- Do not show raw JSON.
+- Do not show calculations.
+- Do not list transaction records.
+- Respond like a business dashboard assistant.
 `;
 
     const response = await ai.models.generateContent({
@@ -161,9 +270,10 @@ ${question}
     });
 
   } catch (error) {
-    console.error(error);
+    console.error("CHAT ERROR:", error);
+
     res.status(500).json({
-      answer: "Something went wrong",
+      answer: error.message,
     });
   }
 });
@@ -174,25 +284,6 @@ app.get("/api/chat", (req, res) => {
   });
 });
 
-//Let's verify Gemini is working
-/*app.get("/api/chat-test", async (req, res) => {
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: "Say Hello from Gemini",
-    });
-
-    res.json({
-      answer: response.text,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: error.message,
-    });
-  }
-});
-*/
 
 app.listen(5000, () => {
   console.log("Server running on port 5000");

@@ -196,7 +196,15 @@ function App() {
           }}
         >
           <h3>Answer</h3>
-          <p>{answer}</p>
+          <div
+            style={{
+              whiteSpace: "pre-wrap",
+              lineHeight: "1.6",
+              fontSize: "16px"
+            }}
+          >
+            {answer}
+          </div>
         </div>
       )}
     </div>
