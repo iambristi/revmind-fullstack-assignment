@@ -82,6 +82,22 @@ app.get("/api/trends", (req, res) => {
 
 });
 
+app.get("/api/products", (req, res) => {
+
+  const products = db.prepare(`
+    SELECT
+      product_name,
+      ROUND(SUM(net_revenue_usd),2) as revenue,
+      SUM(units_sold) as units
+    FROM sales
+    GROUP BY product_name
+    ORDER BY revenue DESC
+  `).all();
+
+  res.json(products);
+
+});
+
 app.listen(5000, () => {
   console.log("Server running on port 5000");
 });
