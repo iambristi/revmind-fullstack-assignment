@@ -13,6 +13,7 @@ import axios from "axios";
 function App() {
   const [summary, setSummary] = useState(null);
   const [trends, setTrends] = useState([]);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     axios
@@ -23,6 +24,11 @@ function App() {
     axios
       .get("http://localhost:5000/api/trends")
       .then((res) => setTrends(res.data))
+      .catch((err) => console.error(err));
+
+    axios
+      .get("http://localhost:5000/api/products")
+      .then((res) => setProducts(res.data))
       .catch((err) => console.error(err));
   }, []);
 
@@ -75,6 +81,38 @@ function App() {
           stroke="#8884d8"
         />
       </LineChart>
+
+      <h2 style={{ marginTop: "50px" }}>
+        Top Products
+      </h2>
+
+      <table
+        border="1"
+        cellPadding="10"
+        style={{
+          marginTop: "20px",
+          borderCollapse: "collapse",
+          width: "100%"
+        }}
+      >
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Revenue</th>
+            <th>Units Sold</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {products.map((product, index) => (
+            <tr key={index}>
+              <td>{product.product_name}</td>
+              <td>${product.revenue}</td>
+              <td>{product.units}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
