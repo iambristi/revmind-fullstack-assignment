@@ -54,7 +54,11 @@ function App() {
       setAnswer(res.data.answer);
     } catch (error) {
       console.error(error);
-      setAnswer("Something went wrong.");
+
+      setAnswer(
+        error.response?.data?.answer ||
+        "Gemini quota exceeded or server error."
+      );
     } finally {
       setLoading(false);
     }

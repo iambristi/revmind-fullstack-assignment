@@ -266,14 +266,14 @@ Rules:
     });
 
     res.json({
-      answer: response.text,
+      answer: response.text || "No answer available."
     });
 
   } catch (error) {
     console.error("CHAT ERROR:", error);
 
     res.status(500).json({
-      answer: error.message,
+      answer: "Gemini quota exceeded. Please try again later."
     });
   }
 });
